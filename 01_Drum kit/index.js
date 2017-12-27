@@ -10,25 +10,21 @@ const audios = {
     "76": "sounds/tink.wav"
 }
 
-function removeTransition(e) {
-    console.log(e)
-    if (e.propertyName !== 'transform') return;
-    e.target.classList.remove('playing');
-}
+const keys = Array.from(document.querySelectorAll(".key"));
+
+keys.forEach(item => item.addEventListener("click", playSound));
+window.addEventListener("keydown", playSound);
 
 function playSound(e) {
     let key = e.type === "keydown" ? e.keyCode : this.getAttribute('data-key');
     if (typeof audios[key] != "undefined") {
         let audio = new Audio(audios[key]);
-        document.querySelector(".key[data-key='" + key + "']").classList.add("playing");
+        const item = document.querySelector(".key[data-key='" + key + "']");
+        item.classList.add("playing");
         audio.currentTime = 0;
         audio.play();
+        window.setTimeout(function () {
+            item.classList.remove("playing");
+        }, 100);
     }
 }
-const keys = Array.from(document.querySelectorAll(".key"));
-
-keys.forEach(item => {
-    item.addEventListener("click", playSound);
-});
-window.addEventListener("keydown", playSound);
-keys.forEach(key => key.addEventListener('transitionend', removeTransition));
